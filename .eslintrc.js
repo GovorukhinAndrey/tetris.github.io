@@ -16,12 +16,15 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'prettier/prettier': 'error',
   },
+  parser: "babel-eslint",
   parserOptions: {
-    parser: 'babel-eslint',
-    babelOptions: {
-      configFile: 'babel.config.js',
+    sourceType: "module",
+    allowImportExportEverywhere: false,
+    ecmaFeatures: {
+      globalReturn: false,
     },
-    sourceType: 'module',
-    allowImportExportEverywhere: false
+    babelOptions: {
+      configFile: "babel.config.js",
+    },
   },
 };
