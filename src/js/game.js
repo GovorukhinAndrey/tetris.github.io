@@ -31,4 +31,27 @@ export default class Game {
     y: 0,
     blocks: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
   };
+  movePieceLeft() {
+    this.activePiece.x -= 1;
+    if (this.isPieceOutBounds()) {
+      this.activePiece.x += 1;
+    }
+  }
+  movePieceRight() {
+    this.activePiece.x += 1;
+    if (this.isPieceOutBounds()) {
+      this.activePiece.x -= 1;
+    }
+  }
+  movePieceDown() {
+    this.activePiece.y += 1;
+    if (this.isPieceOutBounds()) {
+      this.activePiece.y -= 1;
+    }
+  }
+  isPieceOutBounds() {
+    const playfield = this.playfield;
+    const { y, x } = this.activePiece;
+    return playfield[y] === undefined || playfield[y][x] === undefined;
+  }
 }

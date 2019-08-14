@@ -6,6 +6,8 @@ import './../sass/main.sass';
 // js
 import Game from './game.js';
 
-let game = new Game();
+const game = new Game();
+
+window.game = game;
 
 console.log(game);
