@@ -29,16 +29,7 @@ export default class Game {
   activePiece = {
     x: 0,
     y: 0,
-    get blocks() {
-      return this.rotations[this.rotationIndex];
-    },
-    rotationIndex: 0,
-    rotations: [
-      [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
-      [[0, 1, 0], [0, 1, 1], [0, 1, 0]],
-      [[0, 0, 0], [1, 1, 1], [0, 1, 0]],
-      [[0, 1, 0], [1, 1, 0], [0, 1, 0]],
-    ],
+    blocks: [[0, 1, 0], [1, 1, 1], [0, 0, 0]],
   };
 
   movePieceLeft() {
@@ -64,26 +55,25 @@ export default class Game {
   }
 
   rotatePiece() {
-    this.activePiece.rotationIndex = (this.activePiece.rotationIndex + 1) % 4;
-    console.log(this.hasCollision());
-    if (this.hasCollision()) {
-      this.activePiece.rotationIndex =
-        4 - ((this.activePiece.rotationIndex + 1) % 4);
+    const blocks = this.activePiece.blocks;
+    const length = blocks.length;
+
+    const temp = [];
+    for (let i = 0; i < length; i++) {
+      temp[i] = new Array(length).fill(0);
     }
-    return this.activePiece.blocks;
-    //
-    // this.activePiece.rotationIndex =
-    //   this.activePiece.rotationIndex < 3
-    //     ? this.activePiece.rotationIndex + 1
-    //     : 0;
-    // console.log(this.hasCollision());
-    // if (this.hasCollision()) {
-    //   this.activePiece.rotationIndex =
-    //     this.activePiece.rotationIndex > 0
-    //       ? this.activePiece.rotationIndex - 1
-    //       : 3;
-    // }
-    // return this.activePiece.blocks;
+
+    for (let y = 0; y < length; y++) {
+      for (let x = 0; x < length; x++) {
+        temp[x][y] = blocks[length - 1 - y][x];
+      }
+    }
+
+    this.activePiece.blocks = temp;
+
+    if (this.hasCollision()) {
+      this.activePiece.blocks = blocks;
+    }
   }
 
   hasCollision() {
