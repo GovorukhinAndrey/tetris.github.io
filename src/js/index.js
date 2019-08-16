@@ -10,7 +10,7 @@ import View from './view.js';
 const root = document.querySelector('#root');
 
 const game = new Game();
-const view = new View(root, 320, 640, 20, 10);
+const view = new View(root, 480, 640, 20, 10);
 
 window.game = game;
 window.view = view;
@@ -35,3 +35,7 @@ document.addEventListener('keydown', event => {
       break;
   }
 });
+
+// view.renderStartScreen(game.getState());
+// view.renderPauseScreen(game.getState());
+// view.renderEndScreen(game.getState());
