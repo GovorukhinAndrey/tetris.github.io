@@ -43,9 +43,7 @@ const config = {
             options: {
               plugins: [
                 isProduction ? require('cssnano') : () => {},
-                require('autoprefixer')({
-                  browsers: ['last 2 versions'],
-                }),
+                require('autoprefixer')({}),
               ],
             },
           },
@@ -88,7 +86,7 @@ const config = {
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
-    ...glob.sync('./src/*.html').map(htmlFile => {
+    ...glob.sync('./src/*.html').map((htmlFile) => {
       return new HtmlWebpackPlugin({
         filename: path.basename(htmlFile),
         template: htmlFile,
