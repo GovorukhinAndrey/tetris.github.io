@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import _ from 'lodash';
 
-import './../sass/main.sass';
+import './../sass/main.scss';
 
 // js
 import Game from './game.js';
