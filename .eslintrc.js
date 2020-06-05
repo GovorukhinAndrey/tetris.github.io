@@ -2,11 +2,9 @@ module.exports = {
   root: true,
   env: {
     es6: true,
-    node: true,
-    jquery: true,
+    browser: true,
   },
-  // extends: ['prettier'],
-  extends: ['plugin:prettier/recommended'],
+  extends: ['plugin:prettier/recommended', 'plugin:json/recommended'],
   plugins: ['prettier'],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',

@@ -1,17 +1,17 @@
 const path = require('path');
-const glob = require('glob');
-const argv = require('yargs').argv;
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 
-const isDevelopment = argv.mode === 'development';
+const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = !isDevelopment;
-const distPath = path.join(__dirname, '/public');
+const distPath = path.resolve(__dirname, 'public');
 
 const config = {
   entry: {
-    main: './src/js/index.js',
+    main: ['@babel/polyfill', './src/js/index.js'],
   },
   output: {
     filename: 'bundle.js',
@@ -26,92 +26,55 @@ const config = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-          },
-        ],
+        loader: {
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.(sass|scss)$/,
         exclude: /node_modules/,
         use: [
-          isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
-          'css-loader',
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: { sourceMap: isDevelopment },
+          },
           {
             loader: 'postcss-loader',
             options: {
-              plugins: [
-                isProduction ? require('cssnano') : () => {},
-                require('autoprefixer')({}),
-              ],
+              sourceMap: isDevelopment,
+              plugins: [require('cssnano'), require('autoprefixer')],
             },
           },
           'sass-loader',
         ],
-      },
-      {
-        test: /images[\\\/].+\.(gif|png|jpe?g|svg)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: 'images/[name][hash].[ext]',
-            },
-          },
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              mozjpeg: {
-                progressive: true,
-                quality: 70,
-              },
-            },
-          },
-        ],
-      },
-      {
-        test: /fonts[\\\/].+\.(otf|eot|svg|ttf|woff|woff2)$/i,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: 'fonts/[name][hash].[ext]',
-          },
-        },
       },
     ],
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
-      chunkFilename: '[id].css',
     }),
-    ...glob.sync('./src/*.html').map((htmlFile) => {
-      return new HtmlWebpackPlugin({
-        filename: path.basename(htmlFile),
-        template: htmlFile,
-      });
+    new CleanWebpackPlugin(),
+    new HTMLWebpackPlugin({
+      template: './src/index.html',
+      minify: {
+        collapseWhitespace: isProduction,
+      },
     }),
   ],
   optimization: isProduction
     ? {
         minimizer: [
-          new UglifyJsPlugin({
-            sourceMap: true,
-            uglifyOptions: {
-              compress: {
-                inline: false,
-                drop_console: true,
-              },
-            },
-          }),
+          new OptimizeCssAssetsWebpackPlugin(),
+          new TerserWebpackPlugin(),
         ],
       }
     : {},
   devServer: {
-    contentBase: distPath,
     port: 9000,
     compress: true,
+    hot: isDevelopment,
     open: true,
   },
 };
